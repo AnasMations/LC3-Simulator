@@ -1,0 +1,4 @@
+add r0, r0, #3
+add r1, r1, #2
+add r2, r0, r1
+NOT r3, r2
