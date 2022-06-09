@@ -31,6 +31,18 @@ def simulate(list):
             else:
                 reg[list[1]] = reg[list[2]] + reg[list[3]]
 
+        elif instr == "AND":
+            if list[3][0] == "#":
+                reg[list[1]] = reg[list[2]] & int(list[3][1:])
+            else:
+                reg[list[1]] = reg[list[2]] & reg[list[3]]
+
+        elif instr == "OR":
+            if list[3][0] == "#":
+                reg[list[1]] = reg[list[2]] | int(list[3][1:])
+            else:
+                reg[list[1]] = reg[list[2]] | reg[list[3]]
+
 def printSimulation():
     for k, v in reg.items():
         print(k, v)
@@ -38,7 +50,6 @@ def printSimulation():
 #TODO simulate one line
 def simulateLine(list):
     list = decode(list)
-
 
 s = input("line: ")
 print(machineCode(s))
