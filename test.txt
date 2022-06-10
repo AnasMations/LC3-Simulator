@@ -1,7 +1,8 @@
-add r0, r0, #3
-JMP LOOP
+add r0, r0, #3 ;test
+;comment
+LOOP:
 add r1, r1, #2
 add r2, r0, r1
-NOT r3, r2
-LOOP
+add r3, r3, #1
+BRZ LOOP
 .END

@@ -2,14 +2,15 @@
 # ADD done
 # AND done
 # NOT done
-# JMP done
-# BRZ
-# BRP
-# BRN
+# JMP BR done
+# BRZ done
+# BRP BRPZ done
+# BRN BRNZ done
 # LD
 # ST
 
 class LC3:
+    # initialize all the values
     def __init__(self, FILEPATH):
         # TODO fill all LC3 commands with their prespective binary
         # Equivalent binary code of each instruction
@@ -29,9 +30,6 @@ class LC3:
         # instruction memory
         self.instrMemory = self.openFileToList()
 
-    def decode(self, line):
-        return line.replace(",", "").replace("\n", "").upper().split()
-
     # TODO print error messages if input isn't correct
     def errorHandling(self, list):
         list = self.decode(list)
@@ -45,6 +43,7 @@ class LC3:
 
         return binary
 
+    # run only one step
     def simulate(self):
         list = self.instrMemory[self.PC]
         for instr in list:
@@ -66,35 +65,87 @@ class LC3:
                 else:
                     self.REG[list[1]] = ~self.REG[list[2]]
 
-            elif instr == "JMP":
+            elif instr == "JMP" or instr == "BR":
                 for i in range(0, len(self.instrMemory)):
                     if list[1] == self.instrMemory[i][0]:
                         self.PC = i + 1
                         return
+
+            elif instr == "BRZ":
+                if self.REG[ self.instrMemory[self.PC-1][1] ] == 0:
+                    for i in range(0, len(self.instrMemory)):
+                        if list[1] == self.instrMemory[i][0]:
+                            self.PC = i + 1
+                            return
+
+            elif instr == "BRP":
+                if self.REG[ self.instrMemory[self.PC-1][1] ] > 0:
+                    for i in range(0, len(self.instrMemory)):
+                        if list[1] == self.instrMemory[i][0]:
+                            self.PC = i + 1
+                            return
+
+            elif instr == "BRN":
+                if self.REG[ self.instrMemory[self.PC-1][1] ] < 0:
+                    for i in range(0, len(self.instrMemory)):
+                        if list[1] == self.instrMemory[i][0]:
+                            self.PC = i + 1
+                            return
+
+            elif instr == "BRPZ":
+                if self.REG[ self.instrMemory[self.PC-1][1] ] >= 0:
+                    for i in range(0, len(self.instrMemory)):
+                        if list[1] == self.instrMemory[i][0]:
+                            self.PC = i + 1
+                            return
+
+            elif instr == "BRNZ":
+                if self.REG[ self.instrMemory[self.PC-1][1] ] <= 0:
+                    for i in range(0, len(self.instrMemory)):
+                        if list[1] == self.instrMemory[i][0]:
+                            self.PC = i + 1
+                            return
         self.PC += 1
 
-
+    # run all
     def simulateAll(self):
         while(self.instrMemory[self.PC][0] != ".END"):
             print(self.instrMemory[self.PC])
             self.simulate()
 
-
+    # print all registers and their values along with the PC
     def printSimulation(self):
         for k, v in self.REG.items():
             print(k+":\t"+str(v))
         print("PC:\t"+str(self.PC))
 
+    # convert string to list
+    def decode(self, line):
+        return line.replace(",", "").replace("\n", "").replace(":", "").upper().split()
 
+    # read all the string lines in the txt file and convert them into list to get stored in instrMemory
     def openFileToList(self):
         FILE = open(self.FILEPATH, "r")
         lines = FILE.readlines()
         lines = [line.rstrip() for line in lines]
+        instructions = []
         for i in range(0, len(lines)):
-            lines[i] = self.decode(lines[i])
-        return lines
+            if (lines[i].find(";") != -1):
+                if (lines[i][0] == ";"):
+                    continue
+                else:
+                    instructions.append( lines[i][:lines[i].find(";")] )
+            elif (lines[i]==""):
+                continue
+            else:
+                instructions.append(lines[i])
 
+        for i in range(0, len(instructions)):
+            instructions[i] = self.decode(instructions[i])
 
-test = LC3("test.txt")
+        return instructions
+
+# create object from our class LC3 and test on it
+test = LC3("test2.txt")
 test.simulateAll()
 test.printSimulation()

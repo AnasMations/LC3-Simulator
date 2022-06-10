@@ -1,0 +1,77 @@
+.ORIG x3000
+
+;initialize all registers with zero
+AND R0, R0, #0
+AND R1, R1, #0
+AND R2, R2, #0
+AND R3, R3, #0
+AND R4, R4, #0
+AND R5, R5, #0
+AND R6, R6, #0
+AND R7, R7, #0
+
+ADD R0, R0, #2 ;R0: x=2
+ADD R1, R1, #5 ;R1: y=5
+
+ADD R2, R0, R1 ;R2: x+y
+
+;R3: y-x
+NOT R0, R0
+ADD R3, R1, R0
+ADD R3, R3, #1
+NOT R0, R0
+
+;R4: x^y
+AND R2, R2, #0
+ADD R2, R2, R1
+POWER:
+
+;R6: x*x
+AND R6, R6, #0
+AND R7, R7, #0
+ADD R7, R7, R0
+MULT:
+ADD R6, R4, R0
+ADD R7, R7, #-1
+BRp MULT
+ADD R4, R4, R6
+ADD R2, R2, #-1
+BRp POWER
+AND R4, R4, #0
+ADD R4, R4, R6
+
+AND R2, R2, #0
+ADD R2, R0, R1
+
+AND R6, R6, #0
+AND R7, R7, #0
+
+;R5 = 10 if x==y or x<=5
+NOT R6, R1
+ADD R6, R6, #1
+ADD R6, R6, R0 ;R6: x-y
+BRz TRUE
+
+ADD R7, R7, #5
+NOT R7, R7
+ADD R7, R7, #1
+ADD R7, R0, R7
+BRnz TRUE
+
+;R5 = 5 otherwise
+ADD R5, R5, #5
+BR ENDD
+
+AND R6, R6, #0
+AND R7, R7, #0
+
+
+;R5 = 10 if x==y or x<=5
+TRUE:
+ADD R5, R5, #10
+
+ENDD:
+AND R6, R6, #0
+AND R7, R7, #0
+
+.END
