@@ -144,8 +144,3 @@ class LC3:
             instructions[i] = self.decode(instructions[i])
 
         return instructions
-
-# create object from our class LC3 and test on it
-test = LC3("test2.txt")
-test.simulateAll()
-test.printSimulation()
