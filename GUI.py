@@ -9,38 +9,54 @@ from LC3 import LC3
 class MyWindow(QWidget):
     def __init__(self):
         super(MyWindow, self).__init__()
-        self.setGeometry(200, 200, 700, 300)
+        self.setGeometry(200, 200, 800, 400)
+        self.setMinimumSize(500, 300)
         self.setWindowTitle("LC3 Simulator")
         self.initUI()
 
     #window elements (button, label)
     def initUI(self):
-
+        self.lc3 = LC3()
         font = "Bahnschrift"
 
         # User coding area
         self.code_area = QtWidgets.QTextEdit(self)
         self.code_area.setStyleSheet("border:2px solid black; color:black")
         self.code_area.setFont(QFont("Courier", 12))
-        self.code_area.setText(";Sample code\nADD R5, R5, #1\n.END")
-        self.code_area.setGeometry(150, 0, 300, 400)
+        self.code_area.setText(".ORIG x0000\n;Sample code\nADD R1, R1, #1\nADD R2, R2, #2\n.END")
+
+        # Print instructions
+        self.instr_label = QtWidgets.QLabel(self)
+        self.instr_label.setFont(QFont("Courier", 8))
+        self.instr_label.setAlignment(Qt.AlignTop)
+        self.instr_label.setStyleSheet("border:2px solid black; color:black")
+        self.instr_label.setWordWrap(True)
+
+        # Print machine code
+        self.binary_label = QtWidgets.QLabel(self)
+        self.binary_label.setFont(QFont("Courier", 8))
+        self.binary_label.setAlignment(Qt.AlignTop)
+        self.binary_label.setStyleSheet("border:2px solid black; color:black")
+        self.binary_label.setWordWrap(True)
 
         # Print register values
         self.reg_label = QtWidgets.QLabel(self)
-        self.reg_label.setText("Result")
+        self.reg_label.setText(self.lc3.getAllRegisters())
         self.reg_label.setFont(QFont(font, 14))
         self.reg_label.setAlignment(Qt.AlignTop)
         self.reg_label.setStyleSheet("border:2px solid black; color:black")
         self.reg_label.setWordWrap(True)
 
+        # Run buttons
         self.runAll_button = QtWidgets.QPushButton(self)
         self.runAll_button.setText("Run all")
+        self.runAll_button.setFont(QFont(font, 12))
         self.runAll_button.clicked.connect(self.RunAll)
 
         self.runStep_button = QtWidgets.QPushButton(self)
         self.runStep_button.setText("Run step")
-        #self.runStep_button.move(0, 200)
-        self.runStep_button.clicked.connect(self.RunAll)
+        self.runStep_button.setFont(QFont(font, 12))
+        self.runStep_button.clicked.connect(self.RunStep)
 
         #Window Layout
 
@@ -54,20 +70,30 @@ class MyWindow(QWidget):
 
         layout = QHBoxLayout()
         layout.addLayout(sub_layout, 2)
+        layout.addWidget(self.instr_label, 0)
+        layout.addWidget(self.binary_label, 0)
         layout.addWidget(self.reg_label, 0)
         self.setLayout(layout)
 
     def RunAll(self):
-        # create object from our class LC3 and test on it
-        test = LC3()
-        #print(test.openFileToList("testing.txt"))
-        #print(test.readStringToList("add r1, r1, #2\nadd r2, r0, r1\n.END"))
-        print(test.readStringToList(self.code_area.toPlainText()))
+        self.lc3.reset()
+        self.lc3.readStringToList(self.code_area.toPlainText())
 
         try:
-            test.simulateAll()
-            self.reg_label.setText( test.getAllRegisters() )
-            self.reg_label.adjustSize()
+            self.lc3.simulateAll()
+            self.reg_label.setText( self.lc3.getAllRegisters() )
+            self.instr_label.setText( self.lc3.getInstructions() )
+            self.binary_label.setText( self.lc3.getMahcinecode() )
+        except:
+            self.error_message()
+
+    def RunStep(self):
+        self.lc3.readStringToList(self.code_area.toPlainText())
+        try:
+            self.lc3.simulate()
+            self.reg_label.setText( self.lc3.getAllRegisters() )
+            self.instr_label.setText(self.lc3.getInstructions())
+            self.binary_label.setText(self.lc3.getMahcinecode())
         except:
             self.error_message()
 

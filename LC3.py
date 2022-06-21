@@ -102,6 +102,8 @@ class LC3:
                         if list[1] == self.instrMemory[i][0]:
                             self.PC = i + 1
                             return
+            elif instr == ".END":
+                self.reset()
         self.PC += 1
 
     # run all
@@ -110,13 +112,26 @@ class LC3:
             # print(self.instrMemory[self.PC])
             self.simulate()
 
+    def reset(self):
+        self.PC = 0
+        self.REG = {"R0": 0, "R1": 0, "R2": 0, "R3": 0, "R4": 0, "R5": 0, "R6": 0, "R7": 0}
+
     # print all registers and their values along with the PC
     def getAllRegisters(self):
         s = ""
         for k, v in self.REG.items():
             s += (k+":\t"+str(v)+"\n")
         s += ("\nPC:\t"+str(self.PC))
-        print(s)
+        return s
+
+    def getInstructions(self):
+        s = ""
+        for i in range(0, self.PC):
+            s += str(self.instrMemory[i]) + "\n"
+        return s.replace("'", "")
+
+    def getMahcinecode(self):
+        s = "00000000000000000000000000000001"
         return s
 
     # convert string to list
