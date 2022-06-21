@@ -11,7 +11,7 @@
 
 class LC3:
     # initialize all the values
-    def __init__(self, FILEPATH):
+    def __init__(self):
         # TODO fill all LC3 commands with their prespective binary
         # Equivalent binary code of each instruction
         self.instrBinary = {
@@ -24,11 +24,8 @@ class LC3:
         # Program counter
         self.PC = 0
 
-        # file path that contains assembly code
-        self.FILEPATH = FILEPATH
-
         # instruction memory
-        self.instrMemory = self.openFileToList()
+        self.instrMemory = []
 
     # TODO print error messages if input isn't correct
     def errorHandling(self, list):
@@ -110,22 +107,25 @@ class LC3:
     # run all
     def simulateAll(self):
         while(self.instrMemory[self.PC][0] != ".END"):
-            print(self.instrMemory[self.PC])
+            # print(self.instrMemory[self.PC])
             self.simulate()
 
     # print all registers and their values along with the PC
-    def printSimulation(self):
+    def getAllRegisters(self):
+        s = ""
         for k, v in self.REG.items():
-            print(k+":\t"+str(v))
-        print("PC:\t"+str(self.PC))
+            s += (k+":\t"+str(v)+"\n")
+        s += ("\nPC:\t"+str(self.PC))
+        print(s)
+        return s
 
     # convert string to list
     def decode(self, line):
         return line.replace(",", "").replace("\n", "").replace(":", "").upper().split()
 
     # read all the string lines in the txt file and convert them into list to get stored in instrMemory
-    def openFileToList(self):
-        FILE = open(self.FILEPATH, "r")
+    def openFileToList(self, FILEPATH):
+        FILE = open(FILEPATH, "r")
         lines = FILE.readlines()
         lines = [line.rstrip() for line in lines]
         instructions = []
@@ -143,4 +143,26 @@ class LC3:
         for i in range(0, len(instructions)):
             instructions[i] = self.decode(instructions[i])
 
+        self.instrMemory = instructions
+        return instructions
+
+    def readStringToList(self, s):
+        lines = s.split("\n")
+        lines = [line.rstrip() for line in lines]
+        instructions = []
+        for i in range(0, len(lines)):
+            if (lines[i].find(";") != -1):
+                if (lines[i][0] == ";"):
+                    continue
+                else:
+                    instructions.append( lines[i][:lines[i].find(";")] )
+            elif (lines[i]==""):
+                continue
+            else:
+                instructions.append(lines[i])
+
+        for i in range(0, len(instructions)):
+            instructions[i] = self.decode(instructions[i])
+
+        self.instrMemory = instructions
         return instructions
