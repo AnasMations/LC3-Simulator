@@ -103,7 +103,7 @@ class LC3:
                             self.PC = i + 1
                             return
             elif instr == ".END":
-                self.reset()
+                return
         self.PC += 1
 
     # run all
@@ -127,11 +127,11 @@ class LC3:
     def getInstructions(self):
         s = ""
         for i in range(0, self.PC):
-            s += str(self.instrMemory[i]) + "\n"
-        return s.replace("'", "")
+            s += str(i) + "| " + str(self.instrMemory[i]) + "\n"
+        return s.replace("'", "").replace(",", "")
 
     def getMahcinecode(self):
-        s = "00000000000000000000000000000001"
+        s = "0000000000000001"
         return s
 
     # convert string to list
