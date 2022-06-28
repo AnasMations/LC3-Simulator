@@ -16,6 +16,7 @@ class MyWindow(QWidget):
         self.setWindowTitle("LC3 Simulator")
         self.initUI()
         self.menuUI()
+        print("LC3 Simulator")
 
     def menuUI(self):
         self.myQMenuBar = QMenuBar(self)
