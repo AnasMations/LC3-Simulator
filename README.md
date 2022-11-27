@@ -5,6 +5,7 @@
 - AND 
 - NOT 
 - JMP
+- JSR
 - BR 
 - BRZ 
 - BRP 
